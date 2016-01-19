@@ -503,12 +503,32 @@ class Bzip2Format(Format):
     def pipe_writer(self, output_pipe):
         return OutputPipeProcessWrapper(['bzip2'], output_pipe)
 
+
+class XZFormat(Format):
+
+    input = 'bytes'
+    output = 'bytes'
+
+    def __init__(self, compression_level=None):
+        self.compression_level = compression_level
+
+    def pipe_reader(self, input_pipe):
+        return InputPipeProcessWrapper(['xzcat'], input_pipe)
+
+    def pipe_writer(self, output_pipe):
+        args = ['xz']
+        if self.compression_level is not None:
+            args.append('-' + str(int(self.compression_level)))
+        return OutputPipeProcessWrapper(args, output_pipe)
+
+
 Text = TextFormat()
 UTF8 = TextFormat(encoding='utf8')
 Nop = NopFormat()
 SysNewLine = NewlineFormat()
 Gzip = GzipFormat()
 Bzip2 = Bzip2Format()
+XZ = XZFormat()
 MixedUnicodeBytes = MixedUnicodeBytesFormat()
 
 
